@@ -5,7 +5,7 @@ import { gsap } from "gsap";
 import { CustomEase, PixiPlugin } from "gsap/all";
 import Game from "./game";
 
-export const GAME_WIDTH = 480;
+export const GAME_WIDTH = 400;
 export const GAME_HEIGHT = 800;
 
 export const app = new Application({
@@ -22,7 +22,6 @@ gsap.ticker.add(() => {
 });
 
 async function init() {
-
   document.body.appendChild(app.view);
 
   let assets = await initAssets();
@@ -32,7 +31,7 @@ async function init() {
   PixiPlugin.registerPIXI(PIXI);
 
   const game = new Game();
-  app.stage.addChild(game)
+  app.stage.addChild(game);
 }
 
 init();

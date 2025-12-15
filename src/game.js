@@ -1,5 +1,5 @@
 import gsap, { Power0 } from "gsap";
-import { Container, Sprite } from "pixi.js";
+import { Container, Sprite, Text } from "pixi.js";
 import { GAME_HEIGHT, GAME_WIDTH } from ".";
 import LevelData from "./data/levelData";
 import Board from "./game/board";
@@ -29,5 +29,60 @@ export default class Game extends Container {
   init() {
     let board = new Board(this.levelData);
     this.addChild(board);
+    this.createLettersCircle();
+    this.createSuffleButton();
+    this.createPlayButton();
+  }
+
+  createLettersCircle() {
+    const lettersCircle = Sprite.from("circle");
+    lettersCircle.width = 225;
+    lettersCircle.height = 225;
+    lettersCircle.anchor.set(0.5);
+    lettersCircle.x = GAME_WIDTH * 0.5;
+    lettersCircle.y = GAME_HEIGHT - 200;
+    lettersCircle.alpha = 0.6;
+    this.addChild(lettersCircle);
+  }
+
+  createSuffleButton() {
+    const suffleButton = Sprite.from("suffle");
+    suffleButton.width = 40;
+    suffleButton.height = 40;
+    suffleButton.alpha = 0.8;
+    suffleButton.anchor.set(0.5);
+    suffleButton.x = GAME_WIDTH * 0.5;
+    suffleButton.y = GAME_HEIGHT - 200;
+    this.addChild(suffleButton);
+  }
+
+  createPlayButton() {
+    const playButton = Sprite.from("playbutton");
+    playButton.width = 210;
+    playButton.height = 60;
+    playButton.anchor.set(0.5);
+    playButton.x = GAME_WIDTH * 0.5;
+    playButton.y = GAME_HEIGHT - 40;
+
+    const text = new Text("PLAY NOW!", {
+      fontFamily: "Arial",
+      fontSize: 24,
+      fill: 0xffffff,
+      align: "center",
+    });
+    text.anchor.set(0.5);
+    playButton.addChild(text);
+
+    gsap.to(playButton, {
+      pixi: {
+        scale: 1,
+      },
+      duration: 1,
+      repeat: -1,
+      yoyo: true,
+      ease: "easeInOut",
+    });
+
+    this.addChild(playButton);
   }
 }

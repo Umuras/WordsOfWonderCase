@@ -1,6 +1,7 @@
 import { Container, Sprite } from "pixi.js";
 import { GAME_HEIGHT, GAME_WIDTH } from "../index";
-const CELL_SIZE = 72;
+const CELL_SIZE = 64;
+const SLOT_GAP = 8;
 
 export default class Slot extends Container {
   constructor(gridX, gridY) {
@@ -17,8 +18,8 @@ export default class Slot extends Container {
   }
 
   calculatePixelPosition() {
-    this.pixelX = this.gridX * CELL_SIZE;
-    this.pixelY = this.gridY * CELL_SIZE;
+    this.pixelX = this.gridX * (CELL_SIZE + SLOT_GAP);
+    this.pixelY = this.gridY * (CELL_SIZE + SLOT_GAP);
   }
 
   createBackground() {
@@ -26,8 +27,6 @@ export default class Slot extends Container {
     slotSprite.width = CELL_SIZE;
     slotSprite.height = CELL_SIZE;
     slotSprite.anchor.set(0.5);
-    slotSprite.x = CELL_SIZE / 2 + 20;
-    slotSprite.y = CELL_SIZE / 2 + 10;
     console.log("slotSprite", slotSprite);
     this.addChild(slotSprite);
   }
