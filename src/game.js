@@ -1,12 +1,15 @@
 import gsap, { Power0 } from "gsap";
 import { Container, Sprite } from "pixi.js";
 import { GAME_HEIGHT, GAME_WIDTH } from ".";
+import LevelData from "./data/levelData";
 
 export default class Game extends Container {
-
   constructor() {
     super();
-
+    this.levelData = new LevelData({
+      lvlLetters: "G,O,D,L",
+      lvlWords: "0,0,GOLD,H|0,0,GOD,V|2,0,DOG,H|0,2,LOG,V",
+    });
     this.init();
   }
 
@@ -26,6 +29,6 @@ export default class Game extends Container {
       repeat: -1,
       yoyo: true,
       ease: "sine.easeInOut",
-    })
+    });
   }
 }
