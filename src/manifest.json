@@ -6,6 +6,14 @@
         {
           "name": "logo",
           "srcs": "assets/core/logo_white.png"
+        },
+        {
+          "name": "slot_empty",
+          "srcs": "assets/gameImages/game/slot_bg.png"
+        },
+        {
+          "name": "background",
+          "srcs": "assets/gameImages/bg.png"
         }
       ]
     },
