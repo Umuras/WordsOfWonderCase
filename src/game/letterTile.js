@@ -12,8 +12,8 @@ export default class LetterTile extends Container {
 
     this.x = x;
     this.y = y;
-    this.interactive = true;
-    this.buttonMode = true;
+    this.eventMode = "static";
+    this.cursor = "pointer";
     this.on("pointerdown", () => this.select());
   }
 

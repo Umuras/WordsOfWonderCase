@@ -23,6 +23,42 @@ export default class Game extends Container {
     this.addChild(this.wordCircle.container);
     this.wordCircle.container.x = GAME_WIDTH * 0.5;
     this.wordCircle.container.y = GAME_HEIGHT * 0.55;
+
+    this.eventMode = "static";
+    this.isDragging = false;
+
+    this.on("pointerdown", this.onPointerDown.bind(this));
+    this.on("pointerup", this.onPointerUp.bind(this));
+    this.on("pointerupoutside", this.onPointerUp.bind(this));
+    this.on("pointermove", this.onPointerMove.bind(this));
+  }
+
+  onPointerDown(event) {
+    this.isDragging = true;
+
+    console.log("pointer down");
+  }
+
+  onPointerUp() {
+    this.isDragging = false;
+
+    this.currentWord.forEach((tile) => {
+      tile.selected = false;
+    });
+
+    this.currentWord = [];
+    this.wordCircle.update(this.currentWord);
+    console.log("pointer up");
+  }
+
+  onPointerMove(event) {
+    if (!this.isDragging) return;
+
+    const pos = event.data.getLocalPosition(this);
+
+    this.checkLetterCollison(pos.x, pos.y);
+
+    console.log("moving");
   }
 
   init() {
@@ -100,5 +136,22 @@ export default class Game extends Container {
   selectLetter(tile) {
     this.currentWord.push(tile);
     this.wordCircle.update(this.currentWord);
+  }
+
+  checkLetterCollison(x, y) {
+    this.tray.container.children.forEach((tile) => {
+      if (tile.selected) return;
+
+      const bounds = tile.getBounds();
+
+      if (
+        x >= bounds.x &&
+        x <= bounds.x + bounds.width &&
+        y >= bounds.y &&
+        y <= bounds.y + bounds.height
+      ) {
+        tile.select();
+      }
+    });
   }
 }
