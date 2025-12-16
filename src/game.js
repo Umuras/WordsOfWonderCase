@@ -16,7 +16,12 @@ export default class Game extends Container {
     });
     this.init();
 
-    this.tray = new Tray(this.levelData.letters, 200, 600, this);
+    this.tray = new Tray(
+      this.levelData.letters,
+      GAME_WIDTH * 0.5,
+      GAME_HEIGHT - 200,
+      this
+    );
     this.wordCircle = new WordCircle();
 
     this.addChild(this.tray.container);
@@ -77,7 +82,39 @@ export default class Game extends Container {
     suffleButton.y = GAME_HEIGHT - 200;
     suffleButton.eventMode = "static";
     suffleButton.cursor = "pointer";
+
+    suffleButton.on("pointerdown", () => this.shuffleLetters());
+
     this.addChild(suffleButton);
+  }
+
+  shuffleLetters() {
+    const letters = this.tray.container.children;
+    const radius = this.tray.radius;
+    const total = letters.length;
+
+    const angles = [];
+    for (let i = 0; i < total; i++) {
+      angles.push((i * Math.PI * 2) / total - Math.PI / 2);
+    }
+
+    for (let i = angles.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [angles[i], angles[j]] = [angles[j], angles[i]];
+    }
+
+    letters.forEach((tile, i) => {
+      const angle = angles[i];
+      const newX = Math.cos(angle) * radius;
+      const newY = Math.sin(angle) * radius;
+
+      gsap.to(tile, {
+        x: newX,
+        y: newY,
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    });
   }
 
   createPlayButton() {
