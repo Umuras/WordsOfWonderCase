@@ -8,10 +8,11 @@ export default class Board extends Container {
     this.slots = new Map();
     this.x = 100;
     this.y = 120;
-    this.drawWords();
+    this.drawSlots();
+    this.addedWords = new Set();
   }
 
-  drawWords() {
+  drawSlots() {
     for (let w = 0; w < this.levelData.words.length; w++) {
       const wordProps = this.levelData.words[w];
       let gridX;
@@ -56,5 +57,23 @@ export default class Board extends Container {
     const slot = new Slot(gridX, gridY);
     this.slots.set(key, slot);
     return slot;
+  }
+
+  placeWord(wordData) {
+    const { x, y, word, direction } = wordData;
+
+    for (let i = 0; i < word.length; i++) {
+      const slotX = direction === "V" ? x + i : x;
+      const slotY = direction === "H" ? y + i : y;
+
+      const slot = this.slots.get(`${slotX},${slotY}`);
+      if (!slot.filled) {
+        slot.setLetter(word[i]);
+      } else {
+        console.log(`Slot at (${slotX}, ${slotY}) is already filled.`);
+      }
+    }
+
+    this.addedWords.add(word);
   }
 }

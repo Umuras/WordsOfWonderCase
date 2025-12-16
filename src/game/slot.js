@@ -1,4 +1,4 @@
-import { Container, Sprite } from "pixi.js";
+import { Container, Sprite, Text } from "pixi.js";
 import { GAME_HEIGHT, GAME_WIDTH } from "../index";
 const CELL_SIZE = 64;
 const SLOT_GAP = 8;
@@ -12,6 +12,9 @@ export default class Slot extends Container {
     this.pixelX = 0;
     this.pixelY = 0;
 
+    this.filled = false;
+    this.slotSprite = null;
+
     this.calculatePixelPosition();
     this.createBackground();
     this.setPosition();
@@ -23,16 +26,33 @@ export default class Slot extends Container {
   }
 
   createBackground() {
-    let slotSprite = Sprite.from("slot_empty");
-    slotSprite.width = CELL_SIZE;
-    slotSprite.height = CELL_SIZE;
-    slotSprite.anchor.set(0.5);
-    console.log("slotSprite", slotSprite);
-    this.addChild(slotSprite);
+    this.slotSprite = Sprite.from("slot_empty");
+    this.slotSprite.width = CELL_SIZE;
+    this.slotSprite.height = CELL_SIZE;
+    this.slotSprite.anchor.set(0.5);
+    console.log("slotSprite", this.slotSprite);
+    this.addChild(this.slotSprite);
   }
 
   setPosition() {
     this.x = this.pixelY;
     this.y = this.pixelX;
+  }
+
+  setLetter(letter) {
+    if (this.filled) return;
+
+    this.filled = true;
+
+    const text = new Text(letter, {
+      fontFamily: "GameFont",
+      fontSize: 36,
+      fill: 0xffffff,
+      align: "center",
+      fontWeight: "bold",
+    });
+    this.slotSprite.tint = 0xf39c12;
+    text.anchor.set(0.5);
+    this.addChild(text);
   }
 }
