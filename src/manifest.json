@@ -20,8 +20,8 @@
           "srcs": "assets/gameImages/ui/circle.png"
         },
         {
-          "name": "suffle",
-          "srcs": "assets/gameImages/icons/suffle.png"
+          "name": "shuffle",
+          "srcs": "assets/gameImages/icons/shuffle.png"
         },
         {
           "name": "playbutton",

@@ -68,13 +68,15 @@ export default class Game extends Container {
   }
 
   createSuffleButton() {
-    const suffleButton = Sprite.from("suffle");
+    const suffleButton = Sprite.from("shuffle");
     suffleButton.width = 40;
     suffleButton.height = 40;
     suffleButton.alpha = 0.8;
     suffleButton.anchor.set(0.5);
     suffleButton.x = GAME_WIDTH * 0.5;
     suffleButton.y = GAME_HEIGHT - 200;
+    suffleButton.eventMode = "static";
+    suffleButton.cursor = "pointer";
     this.addChild(suffleButton);
   }
 
