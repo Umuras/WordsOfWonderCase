@@ -45,14 +45,56 @@ export default class Game extends Container {
   onPointerUp() {
     this.isDragging = false;
 
+    const word = this.getCurrentWordString();
+    console.log("Formed word:", word);
+
+    if (word.length < 2) {
+      this.resetCurrentWord();
+      return;
+    }
+
+    if (this.levelData.isCorrectWord(word)) {
+      this.onCorrectWord(word);
+    } else {
+      this.onWrongWord();
+    }
+    console.log("pointer up");
+  }
+
+  onCorrectWord(word) {
+    console.log("Correct word formed:", word);
+    this.resetCurrentWord();
+  }
+
+  onWrongWord() {
+    console.log("Wrong word formed");
+
+    gsap
+      .fromTo(
+        this.wordCircle.container,
+        {
+          x: this.wordCircle.container.x - 10,
+        },
+        {
+          x: this.wordCircle.container.x + 10,
+          duration: 0.05,
+          repeat: 5,
+          yoyo: true,
+        }
+      )
+      .then(() => {
+        this.resetCurrentWord();
+      });
+  }
+
+  resetCurrentWord() {
+    this.wordCircle.container.x = GAME_WIDTH * 0.5;
     this.currentWord.forEach((tile) => {
       tile.reset();
     });
-
     this.currentWord = [];
     this.wordCircle.update(this.currentWord);
     this.line.clear();
-    console.log("pointer up");
   }
 
   onPointerMove(event) {
@@ -196,5 +238,9 @@ export default class Game extends Container {
     });
 
     this.line.lineTo(x, y);
+  }
+
+  getCurrentWordString() {
+    return this.currentWord.map((tile) => tile.letter).join("");
   }
 }

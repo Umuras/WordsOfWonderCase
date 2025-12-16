@@ -20,4 +20,8 @@ export default class LevelData {
       };
     });
   }
+
+  isCorrectWord(word) {
+    return this.words.some((w) => w.word === word);
+  }
 }
