@@ -1,5 +1,5 @@
 import gsap, { Power0 } from "gsap";
-import { Container, Sprite, Text } from "pixi.js";
+import { Container, Graphics, Sprite, Text } from "pixi.js";
 import { GAME_HEIGHT, GAME_WIDTH } from ".";
 import LevelData from "./data/levelData";
 import Board from "./game/board";
@@ -27,6 +27,9 @@ export default class Game extends Container {
     this.eventMode = "static";
     this.isDragging = false;
 
+    this.line = new Graphics();
+    this.addChild(this.line);
+
     this.on("pointerdown", this.onPointerDown.bind(this));
     this.on("pointerup", this.onPointerUp.bind(this));
     this.on("pointerupoutside", this.onPointerUp.bind(this));
@@ -48,6 +51,7 @@ export default class Game extends Container {
 
     this.currentWord = [];
     this.wordCircle.update(this.currentWord);
+    this.line.clear();
     console.log("pointer up");
   }
 
@@ -57,6 +61,7 @@ export default class Game extends Container {
     const pos = event.data.getLocalPosition(this);
 
     this.checkLetterCollison(pos.x, pos.y);
+    this.drawLineToPointer(pos.x, pos.y);
 
     console.log("moving");
   }
@@ -136,6 +141,7 @@ export default class Game extends Container {
   selectLetter(tile) {
     this.currentWord.push(tile);
     this.wordCircle.update(this.currentWord);
+    this.drawLine();
   }
 
   checkLetterCollison(x, y) {
@@ -153,5 +159,42 @@ export default class Game extends Container {
         tile.select();
       }
     });
+  }
+
+  drawLine() {
+    this.line.clear();
+
+    if (this.currentWord.length === 0) return;
+
+    this.line.lineStyle(6, 0xf39c12, 1);
+
+    this.currentWord.forEach((tile, index) => {
+      const globalPos = tile.getGlobalPosition();
+
+      if (index === 0) {
+        this.line.moveTo(globalPos.x, globalPos.y);
+      } else {
+        this.line.lineTo(globalPos.x, globalPos.y);
+      }
+    });
+  }
+
+  drawLineToPointer(x, y) {
+    if (this.currentWord.length === 0) return;
+
+    this.line.clear();
+    this.line.lineStyle(6, 0xf39c12, 1);
+
+    this.currentWord.forEach((tile, index) => {
+      const globalPos = tile.getGlobalPosition();
+
+      if (index === 0) {
+        this.line.moveTo(globalPos.x, globalPos.y);
+      } else {
+        this.line.lineTo(globalPos.x, globalPos.y);
+      }
+    });
+
+    this.line.lineTo(x, y);
   }
 }
