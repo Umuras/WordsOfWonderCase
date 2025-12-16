@@ -3,19 +3,38 @@ import { Container, Sprite, Text } from "pixi.js";
 import { GAME_HEIGHT, GAME_WIDTH } from ".";
 import LevelData from "./data/levelData";
 import Board from "./game/board";
+import WordCircle from "./game/wordCircle";
+import Tray from "./game/tray";
 
 export default class Game extends Container {
   constructor() {
     super();
+    this.currentWord = [];
     this.levelData = new LevelData({
       lvlLetters: "G,O,D,L",
       lvlWords: "0,0,GOLD,H|0,0,GOD,V|2,0,DOG,H|0,2,LOG,V",
     });
-    this.initBackground();
     this.init();
+
+    this.tray = new Tray(this.levelData.letters, 185, 572, this);
+    this.wordCircle = new WordCircle();
+
+    this.addChild(this.tray.container);
+    this.addChild(this.wordCircle.container);
+    this.wordCircle.container.x = GAME_WIDTH * 0.5;
+    this.wordCircle.container.y = GAME_HEIGHT * 0.55;
   }
 
-  initBackground() {
+  init() {
+    this.createBackground();
+    let board = new Board(this.levelData);
+    this.addChild(board);
+    this.createLettersCircle();
+    this.createSuffleButton();
+    this.createPlayButton();
+  }
+
+  createBackground() {
     const bg = Sprite.from("background");
     bg.width = GAME_WIDTH;
     bg.height = GAME_HEIGHT;
@@ -26,18 +45,10 @@ export default class Game extends Container {
     this.addChild(bg);
   }
 
-  init() {
-    let board = new Board(this.levelData);
-    this.addChild(board);
-    this.createLettersCircle();
-    this.createSuffleButton();
-    this.createPlayButton();
-  }
-
   createLettersCircle() {
     const lettersCircle = Sprite.from("circle");
-    lettersCircle.width = 225;
-    lettersCircle.height = 225;
+    lettersCircle.width = 220;
+    lettersCircle.height = 220;
     lettersCircle.anchor.set(0.5);
     lettersCircle.x = GAME_WIDTH * 0.5;
     lettersCircle.y = GAME_HEIGHT - 200;
@@ -84,5 +95,10 @@ export default class Game extends Container {
     });
 
     this.addChild(playButton);
+  }
+
+  selectLetter(tile) {
+    this.currentWord.push(tile);
+    this.wordCircle.update(this.currentWord);
   }
 }

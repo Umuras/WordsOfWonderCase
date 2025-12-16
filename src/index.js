@@ -14,6 +14,8 @@ export const app = new Application({
   hello: true,
   width: GAME_WIDTH,
   height: GAME_HEIGHT,
+  resolution: window.devicePixelRatio || 1,
+  autoDensity: true,
 });
 
 app.ticker.stop();
