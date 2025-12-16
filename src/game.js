@@ -16,7 +16,7 @@ export default class Game extends Container {
     });
     this.init();
 
-    this.tray = new Tray(this.levelData.letters, 185, 572, this);
+    this.tray = new Tray(this.levelData.letters, 200, 600, this);
     this.wordCircle = new WordCircle();
 
     this.addChild(this.tray.container);
@@ -43,7 +43,7 @@ export default class Game extends Container {
     this.isDragging = false;
 
     this.currentWord.forEach((tile) => {
-      tile.selected = false;
+      tile.reset();
     });
 
     this.currentWord = [];
