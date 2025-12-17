@@ -1,5 +1,6 @@
 import { Container } from "pixi.js";
 import Slot from "./slot";
+import gsap from "gsap";
 
 export default class Board extends Container {
   constructor(levelData) {
@@ -59,13 +60,29 @@ export default class Board extends Container {
     return slot;
   }
 
-  placeWord(wordData) {
+  async placeWord(wordData, wordCircle) {
     const { x, y, word, direction } = wordData;
+    const { lettersContainer } = wordCircle;
+    wordCircle.bgRectangle.clear();
+    const animations = [];
 
     for (let i = 0; i < word.length; i++) {
       const slotX = direction === "V" ? x + i : x;
       const slotY = direction === "H" ? y + i : y;
 
+      const slot = this.slots.get(`${slotX},${slotY}`);
+      const letterTiles = lettersContainer.children;
+      const targetPos = wordCircle.container.toLocal(slot.getGlobalPosition());
+
+      animations.push(
+        this.tweenTo(letterTiles[i], targetPos.x, targetPos.y, 0.6)
+      );
+    }
+    await Promise.all(animations);
+
+    for (let i = 0; i < word.length; i++) {
+      const slotX = direction === "V" ? x + i : x;
+      const slotY = direction === "H" ? y + i : y;
       const slot = this.slots.get(`${slotX},${slotY}`);
       if (!slot.filled) {
         slot.setLetter(word[i]);
@@ -75,5 +92,18 @@ export default class Board extends Container {
     }
 
     this.addedWords.add(word);
+  }
+
+  async tweenTo(tile, targetX, targetY, duration) {
+    return new Promise((resolve) => {
+      gsap.to(tile, {
+        x: targetX,
+        y: targetY,
+        duration: duration,
+        onComplete: () => {
+          resolve();
+        },
+      });
+    });
   }
 }

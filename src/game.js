@@ -260,8 +260,9 @@ export default class Game extends Container {
       return;
     }
 
-    this.board.placeWord(wordData);
-    this.resetCurrentWord();
+    this.board.placeWord(wordData, this.wordCircle).then(() => {
+      this.resetCurrentWord();
+    });
   }
 
   onAlreadyFoundOrWrongWord() {

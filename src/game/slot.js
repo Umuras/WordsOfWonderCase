@@ -46,7 +46,7 @@ export default class Slot extends Container {
 
     const text = new Text(letter, {
       fontFamily: "GameFont",
-      fontSize: 36,
+      fontSize: 44,
       fill: 0xffffff,
       align: "center",
       fontWeight: "bold",
