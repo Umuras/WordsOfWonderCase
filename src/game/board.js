@@ -32,8 +32,6 @@ export default class Board extends Container {
           } else {
             console.log(`Slot already exists at (${gridX}, ${gridY})`);
           }
-
-          console.log(`For ${wordProps.word}, (${gridX}, ${gridY})`);
         }
       } else {
         for (let i = 0; i < wordProps.length; i++) {
@@ -46,8 +44,6 @@ export default class Board extends Container {
           } else {
             console.log(`Slot already exists at (${gridX}, ${gridY})`);
           }
-
-          console.log(`For ${wordProps.word}, (${gridX}, ${gridY})`);
         }
       }
     }

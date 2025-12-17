@@ -6,14 +6,16 @@ import Board from "./game/board";
 import WordCircle from "./game/wordCircle";
 import Tray from "./game/tray";
 import GameOverScreen from "./game/gameOverScreen";
+import { Levels } from "./data/levels";
 
 export default class Game extends Container {
   constructor() {
     super();
     this.currentWord = [];
+    this.currentLevel = 0;
     this.levelData = new LevelData({
-      lvlLetters: "G,O,D,L",
-      lvlWords: "0,0,GOLD,H|0,0,GOD,V|2,0,DOG,H|0,2,LOG,V",
+      lvlLetters: Levels[this.currentLevel].letters,
+      lvlWords: Levels[this.currentLevel].words,
     });
     this.init();
 
@@ -216,7 +218,6 @@ export default class Game extends Container {
     this.isDragging = false;
 
     const word = this.getCurrentWordString();
-    console.log("Formed word:", word);
 
     if (word.length < 2) {
       this.resetCurrentWord();
@@ -259,7 +260,10 @@ export default class Game extends Container {
     this.board.placeWord(wordData, this.wordCircle).then(() => {
       if (this.board.addedWords.size === this.levelData.words.length) {
         this.resetCurrentWord();
-        this.endGame();
+        this.endGame().then(() => {
+          const gameOverScreen = new GameOverScreen("LEVEL COMPLETE");
+          this.addChild(gameOverScreen);
+        });
       } else {
         this.resetCurrentWord();
       }
@@ -287,30 +291,38 @@ export default class Game extends Container {
 
   endGame() {
     const targets = [this.lettersCircle, this.tray.container];
+    const animations = [];
 
     this.board.slotsList.forEach((slot) => {
-      gsap.to(slot.scale, {
-        x: 0,
-        y: 0,
-        duration: 0.75,
-        ease: "circ.out",
-      });
+      animations.push(
+        new Promise((resolve) => {
+          gsap.to(slot.scale, {
+            x: 0,
+            y: 0,
+            duration: 0.75,
+            ease: "circ.out",
+            onComplete: resolve,
+          });
+        })
+      );
     });
-
-    this.playButton.visible = false;
 
     targets.forEach((t) => {
-      gsap.to(t.scale, {
-        x: 0,
-        y: 0,
-        duration: 0.75,
-        ease: "circ.out",
-        onComplete: () => {
-          const gameOverScreen = new GameOverScreen("LEVEL COMPLETE");
-          this.addChild(gameOverScreen);
-        },
-      });
+      animations.push(
+        new Promise((resolve) => {
+          gsap.to(t.scale, {
+            x: 0,
+            y: 0,
+            duration: 0.75,
+            ease: "circ.out",
+            onComplete: resolve,
+          });
+        })
+      );
     });
+    this.playButton.visible = false;
+
+    return Promise.all(animations);
   }
 
   resetCurrentWord() {
