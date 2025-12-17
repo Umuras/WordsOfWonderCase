@@ -26,6 +26,10 @@
         {
           "name": "playbutton",
           "srcs": "assets/gameImages/ui/install0.png"
+        },
+        {
+          "name": "globe",
+          "srcs": "assets/gameImages/ui/globe.png"
         }
       ]
     },

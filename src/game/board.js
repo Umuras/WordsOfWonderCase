@@ -1,13 +1,16 @@
 import { Container } from "pixi.js";
 import Slot from "./slot";
 import gsap from "gsap";
+import { GAME_WIDTH } from "..";
 
 export default class Board extends Container {
   constructor(levelData) {
     super();
     this.levelData = levelData;
     this.slots = new Map();
-    this.x = 100;
+    this.slotsList = new Set();
+    this.pivot.x = 100;
+    this.x = GAME_WIDTH * 0.5;
     this.y = 120;
     this.drawSlots();
     this.addedWords = new Set();
@@ -57,6 +60,7 @@ export default class Board extends Container {
     }
     const slot = new Slot(gridX, gridY);
     this.slots.set(key, slot);
+    this.slotsList.add(slot);
     return slot;
   }
 

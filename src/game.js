@@ -5,6 +5,7 @@ import LevelData from "./data/levelData";
 import Board from "./game/board";
 import WordCircle from "./game/wordCircle";
 import Tray from "./game/tray";
+import GameOverScreen from "./game/gameOverScreen";
 
 export default class Game extends Container {
   constructor() {
@@ -62,30 +63,30 @@ export default class Game extends Container {
   }
 
   createLettersCircle() {
-    const lettersCircle = Sprite.from("circle");
-    lettersCircle.width = 220;
-    lettersCircle.height = 220;
-    lettersCircle.anchor.set(0.5);
-    lettersCircle.x = GAME_WIDTH * 0.5;
-    lettersCircle.y = GAME_HEIGHT - 200;
-    lettersCircle.alpha = 0.6;
-    this.addChild(lettersCircle);
+    this.lettersCircle = Sprite.from("circle");
+    this.lettersCircle.width = 220;
+    this.lettersCircle.height = 220;
+    this.lettersCircle.anchor.set(0.5);
+    this.lettersCircle.x = GAME_WIDTH * 0.5;
+    this.lettersCircle.y = GAME_HEIGHT - 200;
+    this.lettersCircle.alpha = 0.6;
+    this.addChild(this.lettersCircle);
   }
 
   createSuffleButton() {
-    const suffleButton = Sprite.from("shuffle");
-    suffleButton.width = 40;
-    suffleButton.height = 40;
-    suffleButton.alpha = 0.8;
-    suffleButton.anchor.set(0.5);
-    suffleButton.x = GAME_WIDTH * 0.5;
-    suffleButton.y = GAME_HEIGHT - 200;
-    suffleButton.eventMode = "static";
-    suffleButton.cursor = "pointer";
+    const shuffleButton = Sprite.from("shuffle");
 
-    suffleButton.on("pointerdown", () => this.shuffleLetters());
+    shuffleButton.anchor.set(0.5);
+    shuffleButton.scale.set(2);
 
-    this.addChild(suffleButton);
+    shuffleButton.x = 0;
+    shuffleButton.y = this.lettersCircle.width * 0.5 - 20;
+
+    shuffleButton.eventMode = "static";
+    shuffleButton.cursor = "pointer";
+    shuffleButton.on("pointerdown", () => this.shuffleLetters());
+
+    this.lettersCircle.addChild(shuffleButton);
   }
 
   shuffleLetters() {
@@ -118,12 +119,12 @@ export default class Game extends Container {
   }
 
   createPlayButton() {
-    const playButton = Sprite.from("playbutton");
-    playButton.width = 210;
-    playButton.height = 60;
-    playButton.anchor.set(0.5);
-    playButton.x = GAME_WIDTH * 0.5;
-    playButton.y = GAME_HEIGHT - 40;
+    this.playButton = Sprite.from("playbutton");
+    this.playButton.width = 210;
+    this.playButton.height = 60;
+    this.playButton.anchor.set(0.5);
+    this.playButton.x = GAME_WIDTH * 0.5;
+    this.playButton.y = GAME_HEIGHT - 40;
 
     const text = new Text("PLAY NOW!", {
       fontFamily: "Arial",
@@ -132,9 +133,9 @@ export default class Game extends Container {
       align: "center",
     });
     text.anchor.set(0.5);
-    playButton.addChild(text);
+    this.playButton.addChild(text);
 
-    gsap.to(playButton, {
+    gsap.to(this.playButton, {
       pixi: {
         scale: 1,
       },
@@ -144,7 +145,7 @@ export default class Game extends Container {
       ease: "easeInOut",
     });
 
-    this.addChild(playButton);
+    this.addChild(this.playButton);
   }
 
   selectLetter(tile) {
@@ -209,8 +210,6 @@ export default class Game extends Container {
 
   onPointerDown(event) {
     this.isDragging = true;
-
-    console.log("pointer down");
   }
 
   onPointerUp() {
@@ -229,7 +228,6 @@ export default class Game extends Container {
     } else {
       this.onAlreadyFoundOrWrongWord();
     }
-    console.log("pointer up");
   }
 
   onPointerMove(event) {
@@ -239,8 +237,6 @@ export default class Game extends Container {
 
     this.checkLetterCollison(pos.x, pos.y);
     this.drawLineToPointer(pos.x, pos.y);
-
-    console.log("moving");
   }
 
   getCurrentWordString() {
@@ -261,7 +257,12 @@ export default class Game extends Container {
     }
 
     this.board.placeWord(wordData, this.wordCircle).then(() => {
-      this.resetCurrentWord();
+      if (this.board.addedWords.size === this.levelData.words.length) {
+        this.resetCurrentWord();
+        this.endGame();
+      } else {
+        this.resetCurrentWord();
+      }
     });
   }
 
@@ -282,6 +283,34 @@ export default class Game extends Container {
       .then(() => {
         this.resetCurrentWord();
       });
+  }
+
+  endGame() {
+    const targets = [this.lettersCircle, this.tray.container];
+
+    this.board.slotsList.forEach((slot) => {
+      gsap.to(slot.scale, {
+        x: 0,
+        y: 0,
+        duration: 0.75,
+        ease: "circ.out",
+      });
+    });
+
+    this.playButton.visible = false;
+
+    targets.forEach((t) => {
+      gsap.to(t.scale, {
+        x: 0,
+        y: 0,
+        duration: 0.75,
+        ease: "circ.out",
+        onComplete: () => {
+          const gameOverScreen = new GameOverScreen("LEVEL COMPLETE");
+          this.addChild(gameOverScreen);
+        },
+      });
+    });
   }
 
   resetCurrentWord() {
