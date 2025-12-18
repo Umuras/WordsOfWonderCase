@@ -1,5 +1,6 @@
 import { Container, Sprite, Text } from "pixi.js";
 import { GAME_HEIGHT, GAME_WIDTH } from "../index";
+
 const CELL_SIZE = 64;
 const SLOT_GAP = 8;
 

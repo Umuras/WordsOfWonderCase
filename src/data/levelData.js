@@ -24,10 +24,10 @@ export default class LevelData {
 
     if (config.tutorial) {
       this.hasTutorial = config.tutorial;
-    }
 
-    for (let i = 0; i < this.words.length; i++) {
-      this.tutorialWords.push(this.words[i].word);
+      for (let i = 0; i < this.words.length; i++) {
+        this.tutorialWords.push(this.words[i].word);
+      }
     }
   }
 

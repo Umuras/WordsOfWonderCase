@@ -30,10 +30,12 @@ export default class LetterTile extends Container {
       fontFamily: "GameFont",
       fontSize: 48,
     });
+
     this.letterText.anchor.set(0.5);
 
     this.letterText.x = 0;
     this.letterText.y = 0;
+
     this.addChild(this.letterText);
   }
 
