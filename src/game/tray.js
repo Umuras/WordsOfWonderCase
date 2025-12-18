@@ -26,4 +26,20 @@ export default class Tray {
       this.container.addChild(tile);
     });
   }
+
+  getTilesByWord(word) {
+    const letters = word.split("");
+    const tiles = [];
+
+    letters.forEach((char) => {
+      const tile = this.container.children.find(
+        (t) => t.letter === char && !tiles.includes(t)
+      );
+      if (tile) {
+        tiles.push(tile);
+      }
+    });
+
+    return tiles;
+  }
 }

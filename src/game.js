@@ -7,6 +7,7 @@ import WordCircle from "./game/wordCircle";
 import Tray from "./game/tray";
 import GameOverScreen from "./game/gameOverScreen";
 import { Levels } from "./data/levels";
+import TutorialController from "./tutorial/tutorialController";
 
 export default class Game extends Container {
   constructor() {
@@ -16,6 +17,7 @@ export default class Game extends Container {
     this.levelData = new LevelData({
       lvlLetters: Levels[this.currentLevel].letters,
       lvlWords: Levels[this.currentLevel].words,
+      tutorial: Levels[this.currentLevel].tutorial,
     });
     this.init();
 
@@ -25,18 +27,22 @@ export default class Game extends Container {
       GAME_HEIGHT - 200,
       this
     );
+
     this.wordCircle = new WordCircle();
+    this.wordCircle.container.x = GAME_WIDTH * 0.5;
+    this.wordCircle.container.y = GAME_HEIGHT * 0.55;
 
     this.addChild(this.tray.container);
     this.addChild(this.wordCircle.container);
-    this.wordCircle.container.x = GAME_WIDTH * 0.5;
-    this.wordCircle.container.y = GAME_HEIGHT * 0.55;
 
     this.eventMode = "static";
     this.isDragging = false;
 
     this.line = new Graphics();
     this.addChild(this.line);
+
+    this.tutorial = new TutorialController(this);
+    this.addChild(this.tutorial);
 
     this.on("pointerdown", this.onPointerDown.bind(this));
     this.on("pointerup", this.onPointerUp.bind(this));
@@ -51,6 +57,10 @@ export default class Game extends Container {
     this.createLettersCircle();
     this.createSuffleButton();
     this.createPlayButton();
+
+    if (this.levelData.tutorialWords.length > 0 && this.levelData.hasTutorial) {
+      this.resetIdleTimer();
+    }
   }
 
   createBackground() {
@@ -212,10 +222,18 @@ export default class Game extends Container {
 
   onPointerDown(event) {
     this.isDragging = true;
+    clearTimeout(this.tutorialTimer);
+    if (this.levelData.hasTutorial) {
+      this.tutorial?.stop();
+    }
   }
 
   onPointerUp() {
     this.isDragging = false;
+
+    if (this.levelData.hasTutorial) {
+      this.resetIdleTimer();
+    }
 
     const word = this.getCurrentWordString();
 
@@ -244,6 +262,18 @@ export default class Game extends Container {
     return this.currentWord.map((tile) => tile.letter).join("");
   }
 
+  forceCreateWord(word) {
+    this.resetCurrentWord();
+
+    const tiles = this.tray.getTilesByWord(word);
+
+    tiles.forEach((tile) => {
+      tile.select();
+    });
+
+    this.onCorrectWord(word);
+  }
+
   onCorrectWord(word) {
     const wordData = this.levelData.getWordData(word);
 
@@ -258,6 +288,10 @@ export default class Game extends Container {
     }
 
     this.board.placeWord(wordData, this.wordCircle).then(() => {
+      if (this.levelData.hasTutorial) {
+        this.levelData.updateTutorialWords(this.board.addedWords);
+      }
+
       if (this.board.addedWords.size === this.levelData.words.length) {
         this.resetCurrentWord();
         this.endGame().then(() => {
@@ -320,9 +354,24 @@ export default class Game extends Container {
         })
       );
     });
+
     this.playButton.visible = false;
 
     return Promise.all(animations);
+  }
+
+  resetIdleTimer() {
+    clearTimeout(this.tutorialTimer);
+
+    if (this.isDragging) {
+      return;
+    }
+
+    this.tutorialTimer = setTimeout(() => {
+      if (this.tutorial && !this.tutorial.isRunning) {
+        this.tutorial.start(this.levelData.tutorialWords);
+      }
+    }, 3000);
   }
 
   resetCurrentWord() {

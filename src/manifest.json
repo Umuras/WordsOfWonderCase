@@ -8,7 +8,7 @@
           "srcs": "assets/core/logo_white.png"
         },
         {
-          "name": "slot_empty",
+          "name": "slot",
           "srcs": "assets/gameImages/game/slot_bg.png"
         },
         {
@@ -30,6 +30,10 @@
         {
           "name": "globe",
           "srcs": "assets/gameImages/ui/globe.png"
+        },
+        {
+          "name": "hand",
+          "srcs": "assets/gameImages/icons/hand.png"
         }
       ]
     },

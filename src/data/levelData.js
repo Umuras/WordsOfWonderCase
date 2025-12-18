@@ -2,6 +2,8 @@ export default class LevelData {
   constructor(config) {
     this.letters = [];
     this.words = [];
+    this.hasTutorial = false;
+    this.tutorialWords = [];
     this.init(config);
   }
 
@@ -19,6 +21,14 @@ export default class LevelData {
         length: props[2].length,
       };
     });
+
+    if (config.tutorial) {
+      this.hasTutorial = config.tutorial;
+    }
+
+    for (let i = 0; i < this.words.length; i++) {
+      this.tutorialWords.push(this.words[i].word);
+    }
   }
 
   isCorrectWord(word) {
@@ -27,5 +37,13 @@ export default class LevelData {
 
   getWordData(word) {
     return this.words.find((w) => w.word === word);
+  }
+
+  updateTutorialWords(addedWords) {
+    addedWords.forEach((word) => {
+      if (this.tutorialWords.includes(word)) {
+        this.tutorialWords = this.tutorialWords.filter((t) => t !== word);
+      }
+    });
   }
 }

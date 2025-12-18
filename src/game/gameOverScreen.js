@@ -3,7 +3,7 @@ import { GAME_HEIGHT, GAME_WIDTH } from "..";
 import gsap from "gsap";
 
 export default class GameOverScreen extends Container {
-  constructor(text = "GAME COMPLETE") {
+  constructor(text) {
     super();
     this.createTitle(text);
     this.createGlobe();

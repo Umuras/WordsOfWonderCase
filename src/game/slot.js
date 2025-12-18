@@ -26,11 +26,10 @@ export default class Slot extends Container {
   }
 
   createBackground() {
-    this.slotSprite = Sprite.from("slot_empty");
+    this.slotSprite = Sprite.from("slot");
     this.slotSprite.width = CELL_SIZE;
     this.slotSprite.height = CELL_SIZE;
     this.slotSprite.anchor.set(0.5);
-    console.log("slotSprite", this.slotSprite);
     this.addChild(this.slotSprite);
   }
 
